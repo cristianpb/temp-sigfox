@@ -16,10 +16,12 @@ app.get('/', async (req, res) => {
 })
 
 app.get('/insert', async (req, res) => {
-  const seconds = req.query.seconds
-  const temperature = req.query.temperature
-  const humidity = req.query.humidity
   const req_token = req.query.token
+  const seconds = req.query.seconds
+  const data = req.query.data
+
+  const temperature = Number(data.substr(0,2) + '.' + data.substr(2,2))
+  const humidity = Number(data.substr(4,2) + '.' + data.substr(6,2))
 
   if (req_token === TOKEN) {
     try {
