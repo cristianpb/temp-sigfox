@@ -1,7 +1,8 @@
 const express = require('express')
 const { Client } = require('pg')
 const app = express()
-const port = 3000
+const PORT = process.env.PORT || 3000
+
 
 const client = new Client({
   host: 'localhost',
@@ -19,4 +20,7 @@ app.get('/', async (req, res) => {
   await client.end()
 })
 
-app.listen(port, () => console.log(`Example app listening on port ${port}!`))
+app.get('/hello', async (req, res) => res.send("Hello world"))
+
+
+app.listen(PORT, () => console.log(`Example app listening on port ${PORT}!`))
