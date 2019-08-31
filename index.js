@@ -2,22 +2,40 @@ const express = require('express')
 const { Client } = require('pg')
 const app = express()
 const PORT = process.env.PORT || 3000
-
-
-const client = new Client({
-  host: 'localhost',
-  port: 5432,
-  user: 'postgres',
-  password: 'secret_passwd',
-  database: 'postgres',
-})
+const TOKEN = process.env.TOKEN || "secret_token"
 
 app.get('/', async (req, res) => {
+  let client = new Client({
+    connectionString: process.env.DATABASE_URL || 'postgres://postgres:secret_passwd@localhost:5432/postgres',
+  })
   await client.connect()
-  const result = await client.query('SELECT * FROM data2')
+  const result = await client.query('SELECT * FROM data')
   console.log(result.rows)
-  res.status(200).send(result.rows);
   await client.end()
+  res.status(200).send(result.rows);
+})
+
+app.get('/insert', async (req, res) => {
+  const seconds = req.query.seconds
+  const temperature = req.query.temperature
+  const humidity = req.query.humidity
+  const req_token = req.query.token
+
+  if (req_token === TOKEN) {
+    try {
+      let client = new Client({
+        connectionString: process.env.DATABASE_URL || 'postgres://postgres:secret_passwd@localhost:5432/postgres',
+      })
+      await client.connect()
+      const result = await client.query('INSERT INTO data VALUES($1, $2, $3) RETURNING *', [seconds, temperature, humidity])
+      await client.end()
+      res.status(200).send(result.rows);
+    } catch (err) {
+      console.log(err)
+    }
+  } else {
+    res.status(400).send("Bad token");
+  }
 })
 
 app.get('/hello', async (req, res) => res.send("Hello world"))
