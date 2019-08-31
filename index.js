@@ -3,11 +3,12 @@ const { Client } = require('pg')
 const app = express()
 const PORT = process.env.PORT || 3000
 const TOKEN = process.env.TOKEN || "secret_token"
+const DATABASE_URL = process.env.DATABASE_URL || "postgres://postgres:secret_passwd@localhost:5432/postgres"
 
-app.get('/', async (req, res) => {
-  let client = new Client({
-    connectionString: process.env.DATABASE_URL || 'postgres://postgres:secret_passwd@localhost:5432/postgres',
-  })
+app.use(express.static(__dirname + '/templates'));
+
+app.get('/data', async (req, res) => {
+  let client = new Client({connectionString: DATABASE_URL})
   await client.connect()
   const result = await client.query('SELECT * FROM data')
   console.log(result.rows)
@@ -25,9 +26,7 @@ app.get('/insert', async (req, res) => {
 
   if (req_token === TOKEN) {
     try {
-      let client = new Client({
-        connectionString: process.env.DATABASE_URL || 'postgres://postgres:secret_passwd@localhost:5432/postgres',
-      })
+      let client = new Client({connectionString: DATABASE_URL})
       await client.connect()
       const result = await client.query('INSERT INTO data VALUES($1, $2, $3) RETURNING *', [seconds, temperature, humidity])
       await client.end()
