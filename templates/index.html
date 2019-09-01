@@ -28,6 +28,7 @@
                       borderColor: 'rgb(255, 99, 132)',
                       backgroundColor: 'rgb(255, 99, 132)',
                       fill: false,
+                      yAxisID: 'temp-y-axis',
                       data: data.map((item) => {
                         return {x: moment.unix(item.seconds), y: Number(item.temperature)}
 
@@ -37,6 +38,7 @@
                       borderColor: 'rgb(132, 188, 188)',
                       backgroundColor: 'rgb(132, 188, 188)',
                       fill: false,
+                      yAxisID: 'hum-y-axis',
                       data: data.map((item) => {
                         return {x: moment.unix(item.seconds), y: Number(item.humidity)}
 
@@ -50,6 +52,23 @@
                     scales: {
                       xAxes: [{
                         type: 'time',
+                      }],
+                      yAxes: [{
+                        id: 'temp-y-axis',
+                        type: 'linear',
+                        position: 'left',
+                        scaleLabel: {
+                          display: true,
+                          labelString: 'Temperature'
+                        }
+                      }, {
+                        id: 'hum-y-axis',
+                        type: 'linear',
+                        position: 'right',
+                        scaleLabel: {
+                          display: true,
+                          labelString: 'Humidity'
+                        }
                       }]
                     },
                     tooltips: {
