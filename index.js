@@ -10,7 +10,7 @@ app.use(express.static(__dirname + '/templates'));
 app.get('/data', async (req, res) => {
   let client = new Client({connectionString: DATABASE_URL})
   await client.connect()
-  const result = await client.query('SELECT * FROM data')
+  const result = await client.query('SELECT * FROM data ORDER BY seconds DESC LIMIT 1000')
   console.log(result.rows)
   await client.end()
   res.status(200).send(result.rows);
