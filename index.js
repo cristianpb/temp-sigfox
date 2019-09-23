@@ -8,9 +8,18 @@ const DATABASE_URL = process.env.DATABASE_URL || "postgres://postgres:secret_pas
 app.use(express.static(__dirname + '/templates'));
 
 app.get('/data', async (req, res) => {
+  let query = 'SELECT * FROM data ';
+  const start = req.query.start;
+  const end = req.query.end;
+  const limit = req.query.limit;
+  if (start && end) {
+    query += ` WHERE seconds BETWEEN ${start} and ${end}`;
+  }
+  query += ` ORDER BY seconds DESC LIMIT ${limit? limit: 1000}`;
+  console.log(query);
   let client = new Client({connectionString: DATABASE_URL})
   await client.connect()
-  const result = await client.query('SELECT * FROM data ORDER BY seconds DESC LIMIT 1000')
+  const result = await client.query(query)
   console.log(result.rows)
   await client.end()
   res.status(200).send(result.rows);
