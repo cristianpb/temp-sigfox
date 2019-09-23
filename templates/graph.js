@@ -98,8 +98,8 @@ function all_data() {
 }
 
 function last_week() {
-  var start = moment().unix();
-  var end = moment().subtract(7,'d').unix();
+  var start = moment().subtract(7,'d').unix();
+  var end = moment().unix();
   console.log(start);
   console.log(end);
   create_chart(chart, start, end);
