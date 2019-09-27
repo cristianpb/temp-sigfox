@@ -97,11 +97,15 @@ function all_data() {
   create_chart(chart);
 }
 
+function last_day() {
+  var start = moment().subtract(1,'d').unix();
+  var end = moment().unix();
+  create_chart(chart, start, end);
+}
+
 function last_week() {
   var start = moment().subtract(7,'d').unix();
   var end = moment().unix();
-  console.log(start);
-  console.log(end);
   create_chart(chart, start, end);
 }
 
