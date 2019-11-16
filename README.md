@@ -2,6 +2,8 @@
 
 This repository provides a Micropython code to send data from the ESP8266 using Sigfox network and a nodejs application to show results.
 
+Full details and motivations can be found at [this hackster article](https://www.hackster.io/cristianpb/smart-compost-monitoring-cd122e).
+
 ```
 ├── arduino             <-- Arduino script to send data from ESP8266
 ├── micropython         <-- Micropython script to send data from ESP8266
