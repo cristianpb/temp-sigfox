@@ -1,5 +1,6 @@
 const express = require('express')
 const { Client } = require('pg')
+const convertPayload = require('./parsing.js');
 const app = express()
 const PORT = process.env.PORT || 3000
 const TOKEN = process.env.TOKEN || "secret_token"
@@ -45,6 +46,16 @@ app.get('/insert', async (req, res) => {
     }
   } else {
     res.status(400).send("Bad token");
+  }
+})
+
+app.get('/api/sensor', async (req, res) => {
+  const payload = req.query.payload
+  const result = convertPayload(payload)
+  try {
+    res.status(200).send(result);
+  } catch (err) {
+    console.log(err)
   }
 })
 
