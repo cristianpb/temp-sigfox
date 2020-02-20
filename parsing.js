@@ -51,21 +51,12 @@ function convertPayload(payload) {
   var dhtHum = (parsed.dhtHum / UINT16_t_MAX * 110).toFixed(2);
   var heatIndex = computeHeatIndex(dhtTemp, dhtHum, false).toFixed(2);
 
-  var result = [
-    {
-      "key": "moduleTemp",
-      "value": moduleTemp
-    }, {
-      "key": "dhtTemp",
-      "value": dhtTemp
-    }, {
-      "key": "dhtHum",
-      "value": dhtHum
-    }, {
-      "key": "heatIndex",
-      "value": heatIndex
-    }
-  ]
+  var result = {
+    moduleTemp: moduleTemp,
+    dhtTemp: dhtTemp,
+    dhtHum: dhtHum,
+    heatIndex: heatIndex
+  }
   return result
 }
 

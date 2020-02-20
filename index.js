@@ -1,10 +1,14 @@
 const express = require('express')
+const axios = require('axios');
 const { Client } = require('pg')
 const convertPayload = require('./parsing.js');
 const app = express()
 const PORT = process.env.PORT || 3000
 const TOKEN = process.env.TOKEN || "secret_token"
 const DATABASE_URL = process.env.DATABASE_URL || "postgres://postgres:secret_passwd@localhost:5432/postgres"
+const DEVICE_ID = process.env.DEVICE_ID || "device_id"
+const UNAME = process.env.UNAME || "username"
+const UPASS = process.env.UPASS || "password"
 
 app.use(express.static(__dirname + '/templates'));
 
@@ -50,8 +54,19 @@ app.get('/insert', async (req, res) => {
 })
 
 app.get('/api/sensor', async (req, res) => {
-  const payload = req.query.payload
-  const result = convertPayload(payload)
+  const limit = req.query.limit;
+  const myurl = `https://api.sigfox.com/v2/devices/${DEVICE_ID}/messages?limit=${limit}`
+  const resulting = await axios.get(myurl, {
+    auth: {
+      username: UNAME,
+      password: UPASS
+    }
+  });
+  const result = resulting.data.data.map((item) => {
+    let convertedPayload = convertPayload(item.data) 
+    convertedPayload['time'] = item.time;
+    return convertedPayload
+  });
   try {
     res.status(200).send(result);
   } catch (err) {
