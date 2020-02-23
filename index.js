@@ -12,7 +12,7 @@ const UPASS = process.env.UPASS || "password"
 
 app.use(express.static(__dirname + '/templates'));
 
-app.get('/data', async (req, res) => {
+app.get('/api/data', async (req, res) => {
   let query = 'SELECT * FROM data ';
   const start = req.query.start;
   const end = req.query.end;
@@ -30,7 +30,7 @@ app.get('/data', async (req, res) => {
   res.status(200).send(result.rows);
 })
 
-app.get('/insert', async (req, res) => {
+app.get('/api/insert', async (req, res) => {
   const req_token = req.query.token
   const seconds = req.query.seconds
   const data = req.query.data
@@ -55,8 +55,21 @@ app.get('/insert', async (req, res) => {
 
 app.get('/api/sensor', async (req, res) => {
   const limit = req.query.limit;
-  const myurl = `https://api.sigfox.com/v2/devices/${DEVICE_ID}/messages?limit=${limit}`
+  const start = req.query.start;
+  const end = req.query.end;
+  const params = {}
+  if (limit) {
+    params.limit = limit
+  }
+  if (start) {
+    params.since = start
+  }
+  if (end) {
+    params.before = end
+  }
+  const myurl = `https://api.sigfox.com/v2/devices/${DEVICE_ID}/messages`
   const resulting = await axios.get(myurl, {
+    params: params,
     auth: {
       username: UNAME,
       password: UPASS
@@ -74,7 +87,6 @@ app.get('/api/sensor', async (req, res) => {
   }
 })
 
-app.get('/hello', async (req, res) => res.send("Hello world"))
-
+app.get('/api/healthcheck', (req, res) => res.send("OK"))
 
 app.listen(PORT, () => console.log(`Example app listening on port ${PORT}!`))

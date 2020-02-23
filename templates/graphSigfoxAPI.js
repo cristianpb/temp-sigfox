@@ -1,5 +1,5 @@
-var ctx = document.getElementById('myChart').getContext('2d');
-var chart = new Chart(ctx, {
+var ctx2 = document.getElementById('myChart2').getContext('2d');
+var line_chart = new Chart(ctx2, {
   // The type of chart we want to create
   type: 'line',
 
@@ -12,10 +12,6 @@ var chart = new Chart(ctx, {
       fill: false,
       yAxisID: 'temp-y-axis',
       data: []
-      //data: data.map((item) => {
-      //  return {x: moment.unix(item.seconds), y: Number(item.temperature)}
-
-      //})
     },{
       label: 'Humidity',
       borderColor: 'rgb(132, 188, 188)',
@@ -23,10 +19,6 @@ var chart = new Chart(ctx, {
       fill: false,
       yAxisID: 'hum-y-axis',
       data: []
-      //data: data.map((item) => {
-      //  return {x: moment.unix(item.seconds), y: Number(item.humidity)}
-
-      //})
     },
     ]
   },
@@ -68,48 +60,34 @@ var chart = new Chart(ctx, {
   }
 });
 
-
-function create_chart(chart, start, end, limit) {
-  var query = "/api/data";
+function fill_chart2(chart, start, end, limit) {
+  var query = "/api/sensor";
+  var params = {};
   if (start) {
-    query += `?start=${start}`;
-  } else if (limit) {
-    query += `?limit=${limit}`;
+    params.start = start;
   }
   if (end) {
-    query += `&end=${end}`;
+    params.end = end;
   }
-  console.log(query);
-  $.getJSON(query, function(data) {
+  if (limit) {
+    params.limit = limit;
+  }
+
+  $.getJSON(query, params,  function(data) {
+    console.log(data);
     chart.data.datasets[0].data = data.map((item) => {
-        return {x: moment.unix(item.seconds), y: Number(item.temperature)}
+        return {x: moment(item.time), y: Number(item.dhtTemp)}
       })
     chart.data.datasets[1].data = data.map((item) => {
-        return {x: moment.unix(item.seconds), y: Number(item.humidity)}
+        return {x: moment(item.time), y: Number(item.dhtHum)}
       })
     chart.update();
   });
 }
 
-create_chart(chart);
+fill_chart2(line_chart, null, null, 100);
 
-function all_data() {
-  create_chart(chart);
+function all_data2(points) {
+  fill_chart2(line_chart, null, null, points);
 }
 
-function last_day() {
-  var start = moment().subtract(1,'d').unix();
-  var end = moment().unix();
-  create_chart(chart, start, end);
-}
-
-function last_week() {
-  var start = moment().subtract(7,'d').unix();
-  var end = moment().unix();
-  create_chart(chart, start, end);
-}
-
-function last_points() {
-  var limit = 5;
-  create_chart(chart, null, null, limit);
-}
